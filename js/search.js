@@ -1,51 +1,58 @@
 const AUDIUS_NODE = 'https://discoveryprovider.audius.co/v1';
 const APP_NAME = 'GothicMusicPlayer';
 
-export async function searchTracks(query) {
-  const resultsContainer = document.getElementById('web-results');
-  if (!query) return;
-  resultsContainer.innerHTML = '<div class="status">Поиск...</div>';
+const el = {
+  input: document.getElementById('web-search-input'),
+  btn: document.getElementById('web-search-btn'),
+  results: document.getElementById('web-results'),
+};
 
+export function initSearch(){
+  el.btn.addEventListener('click', ()=> doSearch(el.input.value));
+  el.input.addEventListener('keydown', (e)=>{ if(e.key==='Enter') doSearch(el.input.value); });
+}
+
+async function doSearch(q){
+  q = q.trim();
+  if (!q) return;
+  el.results.innerHTML = '<div class="web-status">Поиск…</div>';
+  el.btn.disabled = true;
   try {
-    const res = await fetch(`${AUDIUS_NODE}/tracks/search?query=${encodeURIComponent(query)}&app_name=${APP_NAME}&limit=15`);
+    const res = await fetch(`${AUDIUS_NODE}/tracks/search?query=${encodeURIComponent(q)}&app_name=${APP_NAME}&limit=20`);
+    if (!res.ok) throw new Error('HTTP '+res.status);
     const json = await res.json();
-    const tracks = (json.data || []).filter(t => t.is_streamable);
-    
-    if (tracks.length === 0) {
-      resultsContainer.innerHTML = '<div class="status">Ничего не найдено.</div>';
-      return;
-    }
-
-    resultsContainer.innerHTML = '';
-    tracks.forEach(track => {
+    const tracks = (json.data||[]).filter(t=>t.is_streamable !== false);
+    if (!tracks.length){ el.results.innerHTML='<div class="web-status">Ничего не найдено.</div>'; return; }
+    el.results.innerHTML='';
+    tracks.forEach(t=>{
+      const artwork = t.artwork ? (t.artwork['150x150']||t.artwork['480x480']) : null;
+      const stream = `${AUDIUS_NODE}/tracks/${t.id}/stream?app_name=${APP_NAME}`;
       const row = document.createElement('div');
-      row.className = 'web-track';
-      const artwork = track.artwork ? (track.artwork['150x150'] || track.artwork['480x480']) : null;
-      const streamUrl = `${AUDIUS_NODE}/tracks/${track.id}/stream?app_name=${APP_NAME}`;
-      
+      row.className='web-track';
       row.innerHTML = `
-        <span class="web-thumb">${artwork ? `<img src="${artwork}" alt="">` : '♪'}</span>
+        <span class="web-thumb">${artwork?`<img src="${artwork}" alt="" loading="lazy">`:'♪'}</span>
         <span class="web-info">
-          <span class="web-title">${track.title}</span>
-          <span class="web-artist">${track.user?.name || 'Audius'}</span>
+          <span class="web-title">${escapeHtml(t.title)}</span>
+          <span class="web-artist">${escapeHtml(t.user?.name||'Audius')}</span>
         </span>
-        <button class="add-btn" data-id="${track.id}" data-title="${track.title}" data-artist="${track.user?.name}" data-artwork="${artwork}" data-duration="${track.duration}" data-stream="${streamUrl}">+</button>
+        <button class="web-add" type="button">+</button>
       `;
-      resultsContainer.appendChild(row);
-    });
-
-    // Обработчик добавления в плейлист
-    resultsContainer.querySelectorAll('.add-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const trackData = e.target.dataset;
-        window.dispatchEvent(new CustomEvent('add-track-to-db', { detail: trackData }));
-        e.target.textContent = '✓';
-        e.target.disabled = true;
+      row.querySelector('.web-add').addEventListener('click', (e)=>{
+        const btn = e.currentTarget;
+        window.dispatchEvent(new CustomEvent('add-track', { detail: {
+          id: t.id, title: t.title, artist: t.user?.name||'Audius',
+          artwork: artwork, duration: t.duration, stream
+        }}));
+        btn.textContent='✓'; btn.disabled=true;
       });
+      el.results.appendChild(row);
     });
-
-  } catch (err) {
-    console.error('Audius search failed:', err);
-    resultsContainer.innerHTML = '<div class="status">Ошибка поиска. Проверьте соединение.</div>';
+  } catch(err){
+    console.error(err);
+    el.results.innerHTML='<div class="web-status">Ошибка поиска. Проверьте соединение.</div>';
+  } finally {
+    el.btn.disabled = false;
   }
 }
+
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
