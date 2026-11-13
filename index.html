@@ -217,7 +217,7 @@
   /* ================= ПРАВАЯ ПАНЕЛЬ ================= */
   .panel{padding:18px;display:flex;flex-direction:column;min-height:540px;position:relative}
 
-  /* ================= НОВЫЙ ПОИСК + ИИ (единый стеклянный стиль) ================= */
+  /* ================= ПОИСК ================= */
   .search-section{margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--line)}
   .search-label{display:block;font-family:var(--font-ui);font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
   .search-label em{font-style:normal;color:var(--accent-hi);letter-spacing:0.05em}
@@ -246,15 +246,8 @@
   .glass-btn:active{transform:scale(0.96)}
   .glass-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
 
-  .glass-btn-subtle{
-    background:linear-gradient(180deg,rgba(255,255,255,0.10) 0%,rgba(255,255,255,0.02) 100%);
-    border-color:rgba(255,255,255,0.1);color:var(--text);
-    box-shadow:inset 0 1px 0 rgba(255,255,255,0.20),inset 0 -1px 0 rgba(0,0,0,0.25),0 4px 12px rgba(0,0,0,0.35);
-  }
-  .glass-btn-subtle:hover{background:linear-gradient(180deg,rgba(255,255,255,0.16) 0%,rgba(255,255,255,0.05) 100%);color:var(--accent-hi)}
-
   .web-results{
-    max-height:240px;overflow-y:auto;margin-top:10px;display:flex;flex-direction:column;gap:4px;
+    max-height:320px;overflow-y:auto;margin-top:10px;display:flex;flex-direction:column;gap:4px;
   }
   .web-results::-webkit-scrollbar{width:6px}
   .web-results::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.12);border-radius:6px}
@@ -269,36 +262,18 @@
   .web-info{min-width:0}
   .web-title{font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .web-artist{font-size:11px;color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .web-download{
-    border:1px solid var(--line);background:rgba(255,255,255,0.04);color:var(--accent-hi);font-family:var(--font-ui);font-size:10px;font-weight:600;
-    padding:4px 10px;border-radius:8px;cursor:pointer;text-decoration:none;transition:background .15s,border-color .15s;white-space:nowrap;
+  .web-add{
+    border:1px solid rgba(139,92,246,0.4);background:rgba(139,92,246,0.12);color:var(--accent-hi);font-family:var(--font-ui);font-size:10px;font-weight:600;
+    padding:5px 12px;border-radius:8px;cursor:pointer;white-space:nowrap;transition:background .15s,border-color .15s;
   }
-  .web-download:hover{background:rgba(139,92,246,0.15);border-color:rgba(139,92,246,0.4)}
+  .web-add:hover{background:rgba(139,92,246,0.25);border-color:rgba(139,92,246,0.6)}
+  .web-add:disabled{opacity:0.4;cursor:default}
   .web-status{font-size:12px;color:var(--muted);text-align:center;padding:12px 0}
   .web-warning{font-size:10px;color:#7a6a5a;margin-top:8px;line-height:1.5;border-left:2px solid rgba(139,92,246,0.3);padding-left:8px}
 
-  /* ================= ИИ-ПОМОЩНИК ================= */
-  .ai-section{margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
-  .ai-toggle{
-    display:flex;align-items:center;gap:8px;width:100%;padding:8px 12px;margin-bottom:8px;
-    border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,0.04);color:var(--text-2);
-    font-family:var(--font-ui);font-size:11px;font-weight:600;cursor:pointer;transition:background .15s,border-color .15s;
-  }
-  .ai-toggle:hover{background:rgba(255,255,255,0.07);border-color:rgba(139,92,246,0.3)}
-  .ai-toggle .dot{width:6px;height:6px;border-radius:50%;background:var(--accent-hi);box-shadow:0 0 8px var(--accent-hi)}
-  .ai-body{display:none;flex-direction:column;gap:8px}
-  .ai-body.open{display:flex}
-  .ai-response{
-    font-size:12px;line-height:1.6;color:var(--text-2);padding:10px 14px;border-radius:12px;
-    background:rgba(255,255,255,0.025);border:1px solid var(--line);
-    min-height:38px;white-space:pre-wrap;
-  }
-  .ai-response strong{color:var(--accent-hi);font-weight:600}
-  .ai-hint{font-size:10px;color:var(--muted);line-height:1.4}
-
   /* ================= ПЛЕЙЛИСТ ================= */
   .panel-head{display:flex;gap:10px;margin-bottom:12px}
-  .playlist{list-style:none;margin:0;padding:0;flex:1;max-height:380px;overflow-y:auto;display:flex;flex-direction:column;gap:2px}
+  .playlist{list-style:none;margin:0;padding:0;flex:1;max-height:420px;overflow-y:auto;display:flex;flex-direction:column;gap:2px}
   .playlist::-webkit-scrollbar{width:8px}
   .playlist::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.10);border-radius:8px}
   .playlist::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.18)}
@@ -408,28 +383,15 @@
 
   <!-- ПРАВАЯ ПАНЕЛЬ -->
   <section class="panel">
-    <!-- ПОИСК В ИНТЕРНЕТЕ -->
+    <!-- ПОИСК В ИНТЕРНЕТЕ (Audius) -->
     <div class="search-section">
-      <label class="search-label" for="webSearchInput">Поиск треков в <em>iTunes</em> (бесплатные превью)</label>
+      <label class="search-label" for="webSearchInput">Поиск треков в <em>Audius</em> — слушай прямо здесь</label>
       <div class="search-row">
         <input type="search" class="glass-input" id="webSearchInput" placeholder="Название трека или исполнитель…">
         <button class="glass-btn" id="webSearchBtn" type="button">Найти</button>
       </div>
       <div class="web-results" id="webResults"></div>
-      <div class="web-warning">iTunes Search API: без ключа, CORS разрешён. «Скачать» открывает 30-секундное превью — сохраните через контекстное меню браузера.</div>
-    </div>
-
-    <!-- ИИ-ПОМОЩНИК -->
-    <div class="ai-section">
-      <button class="ai-toggle" id="aiToggle" type="button"><span class="dot"></span> ИИ-помощник по музыке <span style="margin-left:auto;opacity:.5" id="aiChevron">▾</span></button>
-      <div class="ai-body" id="aiBody">
-        <div class="search-row">
-          <input type="text" class="glass-input" id="aiInput" placeholder="Спроси: «что послушать под готический вечер?»">
-          <button class="glass-btn glass-btn-subtle" id="aiAskBtn" type="button">Спросить</button>
-        </div>
-        <div class="ai-response" id="aiResponse">Привет. Я помогу подобрать музыку под настроение или жанр. Просто напиши запрос.</div>
-        <div class="ai-hint">OVHcloud AI · Mistral · бесплатно, до 2 запросов в минуту</div>
-      </div>
+      <div class="web-warning">Audius: бесплатный каталог, полные треки (не 30-сек. превью), без ключа и CORS. «+» добавляет в плейлист — играет сразу, ничего скачивать не нужно.</div>
     </div>
 
     <!-- ЛОКАЛЬНЫЙ ПЛЕЙЛИСТ -->
@@ -442,7 +404,7 @@
     <ul class="playlist" id="playlist"></ul>
     <div class="empty" id="dropHint">
       <div class="empty-icon">♫</div>
-      <p>Перетащи сюда музыку<br><span>можно папку с треками и обложками, или просто одну картинку для текущего трека</span></p>
+      <p>Перетащи сюда музыку<br><span>или найди трек в Audius выше и нажми «+»</span></p>
     </div>
   </section>
 </main>
@@ -471,8 +433,6 @@ const el = {
   brand: $('#brand'), intro: $('#intro'),
   webSearchInput: $('#webSearchInput'), webSearchBtn: $('#webSearchBtn'),
   webResults: $('#webResults'),
-  aiToggle: $('#aiToggle'), aiBody: $('#aiBody'), aiInput: $('#aiInput'),
-  aiAskBtn: $('#aiAskBtn'), aiResponse: $('#aiResponse'), aiChevron: $('#aiChevron'),
 };
 
 /* =========================================================
@@ -946,109 +906,81 @@ if ('mediaSession' in navigator){
 }
 
 /* =========================================================
-   17. ПОИСК В ИНТЕРНЕТЕ — iTunes Search API
+   17. ПОИСК В ИНТЕРНЕТЕ — Audius (полные треки, без ключа)
    ========================================================= */
-const ITUNES_API = 'https://itunes.apple.com/search';
+const AUDIUS_NODE = 'https://discoveryprovider.audius.co/v1';
+const AUDIUS_APP = 'GothicMusicPlayer';
+let currentWebResults = [];
 
-async function searchWeb(query){
+async function searchAudius(query){
   const q = query.trim();
   if (!q) return;
   el.webResults.innerHTML = '<div class="web-status">Поиск…</div>';
   el.webSearchBtn.disabled = true;
 
   try {
-    const url = ITUNES_API + '?term=' + encodeURIComponent(q) + '&media=music&limit=15';
+    const url = AUDIUS_NODE + '/tracks/search?query=' + encodeURIComponent(q) + '&app_name=' + AUDIUS_APP + '&limit=20';
     const res = await fetch(url);
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const json = await res.json();
-    const tracks = json.results || [];
+    const tracks = (json.data || []).filter(t => t.is_streamable !== false);
     if (!tracks.length){
-      el.webResults.innerHTML = '<div class="web-status">Ничего не найдено.</div>';
+      el.webResults.innerHTML = '<div class="web-status">Ничего не найдено в Audius.</div>';
       return;
     }
+    currentWebResults = tracks;
     el.webResults.innerHTML = '';
-    tracks.forEach(t => {
+    tracks.forEach((t, idx) => {
       const row = document.createElement('div');
       row.className = 'web-track';
-      const cover = t.artworkUrl100 ? t.artworkUrl100.replace('100x100bb', '150x150bb') : null;
-      const preview = t.previewUrl || null;
+      const cover = t.artwork ? (t.artwork['150x150'] || t.artwork['480x480']) : null;
       row.innerHTML =
         '<span class="web-thumb">' + (cover ? '<img src="' + esc(cover) + '" alt="" loading="lazy">' : '♪') + '</span>' +
-        '<span class="web-info"><span class="web-title">' + esc(t.trackName || 'Без названия') + '</span>' +
-        '<span class="web-artist">' + esc(t.artistName || 'Неизвестен') + '</span></span>' +
-        (preview
-          ? '<a class="web-download" target="_blank" rel="noopener" href="' + esc(preview) + '">Скачать</a>'
-          : '<span class="web-download" style="opacity:.4;cursor:default">Нет превью</span>');
+        '<span class="web-info"><span class="web-title">' + esc(t.title) + '</span>' +
+        '<span class="web-artist">' + esc(t.user ? t.user.name : 'Audius') + '</span></span>' +
+        '<button class="web-add" data-idx="' + idx + '" type="button">+</button>';
+      row.querySelector('.web-add').addEventListener('click', (e) => {
+        e.stopPropagation();
+        addWebTrackToPlaylist(idx);
+      });
       el.webResults.appendChild(row);
     });
   } catch(err) {
-    console.error('iTunes search failed:', err);
+    console.error('Audius search failed:', err);
     el.webResults.innerHTML = '<div class="web-status">Ошибка поиска. Проверьте соединение или откройте сайт через HTTPS (не file://).</div>';
   } finally {
     el.webSearchBtn.disabled = false;
   }
 }
 
-el.webSearchBtn.addEventListener('click', () => searchWeb(el.webSearchInput.value));
+function addWebTrackToPlaylist(idx){
+  const t = currentWebResults[idx];
+  if (!t) return;
+  const streamUrl = AUDIUS_NODE + '/tracks/' + encodeURIComponent(t.id) + '/stream?app_name=' + AUDIUS_APP;
+  const cover = t.artwork ? (t.artwork['480x480'] || t.artwork['150x150']) : null;
+  const track = {
+    url: streamUrl,
+    title: t.title || 'Без названия',
+    artist: t.user ? t.user.name : 'Audius',
+    album: '',
+    cover: cover || null,
+    duration: t.duration || null,
+  };
+  state.tracks.push(track);
+  const newIndex = state.tracks.length - 1;
+  renderPlaylist();
+  playIndex(newIndex);
+  const btn = el.webResults.querySelector('[data-idx="' + idx + '"]');
+  if (btn){ btn.textContent = '✓'; btn.disabled = true; }
+}
+
+el.webSearchBtn.addEventListener('click', () => searchAudius(el.webSearchInput.value));
 el.webSearchInput.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter'){ e.preventDefault(); searchWeb(el.webSearchInput.value); }
+  if (e.key === 'Enter'){ e.preventDefault(); searchAudius(el.webSearchInput.value); }
 });
 
 /* =========================================================
-   18. ИИ-ПОМОЩНИК — OVHcloud AI (Mistral, без ключа)
-   ========================================================= */
-const AI_ENDPOINT = 'https://oai.endpoints.kepler.ai.cloud.ovh.net/v1/chat/completions';
-const AI_MODEL = 'Mistral-Small-3.2-24B-Instruct-2506';
-
-async function askAI(prompt){
-  const q = prompt.trim();
-  if (!q) return;
-  el.aiResponse.textContent = 'Думаю…';
-  el.aiAskBtn.disabled = true;
-
-  try {
-    const res = await fetch(AI_ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: AI_MODEL,
-        messages: [
-          { role: 'system', content: 'Ты — музыкальный помощник внутри Gothic Music Player. Отвечай кратко (1–2 предложения), предлагай конкретные треки или исполнителей. Пиши по-русски.' },
-          { role: 'user', content: q }
-        ],
-        max_tokens: 150
-      })
-    });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const json = await res.json();
-    const text = json.choices?.[0]?.message?.content?.trim() || 'Не удалось получить ответ.';
-    el.aiResponse.innerHTML = '<strong>ИИ:</strong> ' + esc(text);
-  } catch(err) {
-    console.error('AI request failed:', err);
-    el.aiResponse.textContent = 'ИИ временно недоступен. Возможно, превышен лимит (2 запроса в минуту) или нет сети.';
-  } finally {
-    el.aiAskBtn.disabled = false;
-  }
-}
-
-el.aiToggle.addEventListener('click', () => {
-  const open = el.aiBody.classList.toggle('open');
-  el.aiChevron.textContent = open ? '▴' : '▾';
-  store.set('aiOpen', open);
-});
-el.aiAskBtn.addEventListener('click', () => askAI(el.aiInput.value));
-el.aiInput.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter'){ e.preventDefault(); askAI(el.aiInput.value); }
-});
-
-/* Восстановить открытие ИИ-панели */
-if (store.get('aiOpen', false)){
-  el.aiBody.classList.add('open');
-  el.aiChevron.textContent = '▴';
-}
-
-/* =========================================================
-   19. ИНТРО
+   18. ИНТРО
    ========================================================= */
 const INTRO_KEY = 'spm.introShown';
 let introTimer = null;
@@ -1068,7 +1000,7 @@ el.brand.addEventListener('click', replayIntro);
 el.brand.addEventListener('keydown', (e) => { if (e.code === 'Enter' || e.code === 'Space'){ e.preventDefault(); replayIntro(); } });
 
 /* =========================================================
-   20. СТАРТ
+   19. СТАРТ
    ========================================================= */
 attachAudio(audio);
 el.playBtn.innerHTML = ICON_PLAY;
