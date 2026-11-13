@@ -123,5 +123,118 @@
 
 <!-- Приложение -->
 <script type="module" src="js/app.js"></script>
+  
+  <!-- ПРЕДУПРЕЖДЕНИЕ О РАЗРАБОТКЕ -->
+<div id="dev-warning" class="dev-warning-overlay">
+  <div class="dev-warning-modal">
+    <div class="dev-warning-icon">⚠</div>
+    <h2 class="dev-warning-title">Идёт разработка</h2>
+    <p class="dev-warning-text">
+      Сейчас ведётся разработка проекта — функции не работают.<br>
+      Можете пока оценить дизайн плеера, я пошёл спать.
+    </p>
+    <button id="dev-warning-close" class="dev-warning-btn" type="button">Понятно</button>
+  </div>
+</div>
+  
+<style>
+  .dev-warning-overlay {
+    position: fixed; inset: 0; z-index: 100000;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(3,3,5,0.78);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    padding: 20px;
+    opacity: 0; visibility: hidden;
+    transition: opacity .4s ease, visibility .4s;
+  }
+  .dev-warning-overlay.show { opacity: 1; visibility: visible; }
+
+  .dev-warning-modal {
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0) 100%),
+      rgba(18, 18, 22, 0.96);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 24px;
+    padding: 32px 28px;
+    max-width: 420px;
+    width: 100%;
+    text-align: center;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.06),
+      0 24px 80px rgba(0,0,0,0.7),
+      0 0 60px rgba(139,92,246,0.15);
+    transform: scale(0.92) translateY(10px);
+    transition: transform .4s cubic-bezier(.2,.8,.2,1);
+  }
+  .dev-warning-overlay.show .dev-warning-modal {
+    transform: scale(1) translateY(0);
+  }
+
+  .dev-warning-icon {
+    width: 56px; height: 56px; margin: 0 auto 16px;
+    display: grid; place-items: center;
+    border-radius: 50%;
+    background: linear-gradient(160deg, #a78bfa 0%, #7c3aed 50%, #4c1d95 100%);
+    border: 1px solid rgba(255,255,255,0.2);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.35),
+      0 4px 14px rgba(139,92,246,0.5),
+      0 0 30px rgba(139,92,246,0.3);
+    font-size: 26px; color: #fff;
+    animation: devPulse 2s ease-in-out infinite;
+  }
+  @keyframes devPulse {
+    0%, 100% { box-shadow: inset 0 1px 0 rgba(255,255,255,0.35), 0 4px 14px rgba(139,92,246,0.5), 0 0 30px rgba(139,92,246,0.3); }
+    50%      { box-shadow: inset 0 1px 0 rgba(255,255,255,0.45), 0 4px 20px rgba(139,92,246,0.8), 0 0 50px rgba(139,92,246,0.6); }
+  }
+
+  .dev-warning-title {
+    font-family: 'UnifrakturCook', 'Old English Text MT', serif;
+    font-size: 26px; font-weight: 700;
+    color: #ececf1; margin: 0 0 12px;
+    letter-spacing: 0.01em;
+  }
+
+  .dev-warning-text {
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 14px; line-height: 1.65;
+    color: #a0a0aa; margin: 0 0 22px;
+  }
+
+  .dev-warning-btn {
+    padding: 11px 28px;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: linear-gradient(180deg, #a78bfa 0%, #7c3aed 100%);
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px; font-weight: 600;
+    cursor: pointer;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.35), 0 4px 16px rgba(124,58,237,0.45);
+    transition: transform .15s, box-shadow .2s;
+  }
+  .dev-warning-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.45), 0 8px 24px rgba(124,58,237,0.6);
+  }
+  .dev-warning-btn:active { transform: scale(0.96); }
+</style>
+
+<script>
+  (function(){
+    const overlay = document.getElementById('dev-warning');
+    const closeBtn = document.getElementById('dev-warning-close');
+    if (!overlay || !closeBtn) return;
+
+    // Показываем после интро (3.5 сек). Хочешь сразу — поставь 0.
+    setTimeout(() => overlay.classList.add('show'), 3500);
+
+    const close = () => overlay.classList.remove('show');
+    closeBtn.addEventListener('click', close);
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+    document.addEventListener('keydown', (e) => { if (e.code === 'Escape') close(); });
+  })();
+</script>
 </body>
 </html>
