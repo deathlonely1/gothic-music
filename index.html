@@ -41,7 +41,7 @@
     </div>
     <div class="meta">
       <h1 id="title">Ничего не играет</h1>
-      <p id="artist">Найди трек и нажми +</p>
+      <p id="artist">Найди трек в SoundCloud и нажми +</p>
     </div>
     <div class="seek-row">
       <span id="cur">0:00</span>
@@ -49,10 +49,16 @@
       <span id="dur">0:00</span>
     </div>
     <div class="controls">
-      <button class="btn" id="shuffleBtn" title="Перемешать (S)"><svg viewBox="0 0 24 24"><path d="M16 3h5v5"/><path d="M4 20 21 3"/><path d="M21 16v5h-5"/><path d="m15 15 6 6"/><path d="m4 4 5 5"/></svg></button>
-      <button class="btn" id="prevBtn" title="Предыдущий"><svg viewBox="0 0 24 24"><path d="M6 5h2v14H6z" fill="currentColor" stroke="none"/><path d="M20 5 9 12l11 7z" fill="currentColor" stroke="none"/></svg></button>
+      <button class="btn" id="shuffleBtn" title="Перемешать (S)">
+        <svg viewBox="0 0 24 24"><path d="M16 3h5v5"/><path d="M4 20 21 3"/><path d="M21 16v5h-5"/><path d="m15 15 6 6"/><path d="m4 4 5 5"/></svg>
+      </button>
+      <button class="btn" id="prevBtn" title="Предыдущий">
+        <svg viewBox="0 0 24 24"><path d="M6 5h2v14H6z" fill="currentColor" stroke="none"/><path d="M20 5 9 12l11 7z" fill="currentColor" stroke="none"/></svg>
+      </button>
       <button class="btn play" id="playBtn" title="Играть (Space)"></button>
-      <button class="btn" id="nextBtn" title="Следующий"><svg viewBox="0 0 24 24"><path d="M18 5h-2v14h2z" fill="currentColor" stroke="none"/><path d="M4 5l11 7-11 7z" fill="currentColor" stroke="none"/></svg></button>
+      <button class="btn" id="nextBtn" title="Следующий">
+        <svg viewBox="0 0 24 24"><path d="M18 5h-2v14h2z" fill="currentColor" stroke="none"/><path d="M4 5l11 7-11 7z" fill="currentColor" stroke="none"/></svg>
+      </button>
       <button class="btn" id="repeatBtn" title="Повтор (R)"></button>
     </div>
     <div class="volume-row">
@@ -63,22 +69,25 @@
 
   <!-- ПРАВАЯ ПАНЕЛЬ -->
   <section class="panel">
+    <!-- АВТОРИЗАЦИЯ -->
     <div class="auth-section">
       <button id="login-btn" class="auth-btn">Войти</button>
       <span id="user-email"></span>
       <button id="logout-btn" class="auth-btn subtle" style="display:none;">Выйти</button>
     </div>
 
+    <!-- ПОИСК SOUNDCLOUD -->
     <div class="search-section">
-      <label class="search-label" for="web-search-input">Поиск треков в <em>Audius</em></label>
+      <label class="search-label" for="web-search-input">Поиск треков в <em>SoundCloud</em></label>
       <div class="search-row">
         <input type="search" class="glass-input" id="web-search-input" placeholder="Название трека или исполнитель…">
         <button class="glass-btn" id="web-search-btn" type="button">Найти</button>
       </div>
       <div class="web-results" id="web-results"></div>
-      <div class="web-warning">Audius: бесплатный каталог, полные треки. «+» сохраняет трек в ваш плейлист (нужен вход).</div>
+      <div class="web-warning">Поиск идёт через публичный CORS-прокси. Воспроизведение — через официальный виджет SoundCloud.</div>
     </div>
 
+    <!-- ПЛЕЙЛИСТ -->
     <h2 class="playlist-title">Мой плейлист</h2>
     <ul class="user-playlist" id="user-playlist"></ul>
     <div class="empty" id="dropHint">
@@ -100,8 +109,19 @@
   </div>
 </div>
 
-<script type="module" src="js/app.js"></script>
-  <script src="https://w.soundcloud.com/player/api.js"></script>
+<!-- СКРЫТЫЙ IFRAME ДЛЯ SOUNDCLOUD WIDGET -->
+<iframe id="sc-widget"
+        width="1" height="1"
+        scrolling="no" frameborder="no"
+        allow="autoplay"
+        style="position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;"
+        src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/0&color=%238b5cf6&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false&visual=false">
+</iframe>
+
+<!-- Официальный SoundCloud Widget API -->
+<script src="https://w.soundcloud.com/player/api.js"></script>
+
+<!-- Приложение -->
 <script type="module" src="js/app.js"></script>
 </body>
 </html>
