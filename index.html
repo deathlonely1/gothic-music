@@ -383,15 +383,15 @@
 
   <!-- ПРАВАЯ ПАНЕЛЬ -->
   <section class="panel">
-    <!-- ПОИСК В ИНТЕРНЕТЕ (Audius) -->
+    <!-- ПОИСК В ИНТЕРНЕТЕ (iTunes) -->
     <div class="search-section">
-      <label class="search-label" for="webSearchInput">Поиск треков в <em>Audius</em> — слушай прямо здесь</label>
+      <label class="search-label" for="webSearchInput">Поиск треков в <em>iTunes</em> — слушай превью прямо здесь</label>
       <div class="search-row">
         <input type="search" class="glass-input" id="webSearchInput" placeholder="Название трека или исполнитель…">
         <button class="glass-btn" id="webSearchBtn" type="button">Найти</button>
       </div>
       <div class="web-results" id="webResults"></div>
-      <div class="web-warning">Audius: бесплатный каталог, полные треки (не 30-сек. превью), без ключа и CORS. «+» добавляет в плейлист — играет сразу, ничего скачивать не нужно.</div>
+      <div class="web-warning">iTunes Search API: без ключа, CORS разрешён, стабильно работает на GitHub Pages. «+» добавляет 30-сек. превью в плейлист — можно слушать сразу, без скачивания.</div>
     </div>
 
     <!-- ЛОКАЛЬНЫЙ ПЛЕЙЛИСТ -->
@@ -404,7 +404,7 @@
     <ul class="playlist" id="playlist"></ul>
     <div class="empty" id="dropHint">
       <div class="empty-icon">♫</div>
-      <p>Перетащи сюда музыку<br><span>или найди трек в Audius выше и нажми «+»</span></p>
+      <p>Перетащи сюда музыку<br><span>или найди трек в iTunes выше и нажми «+»</span></p>
     </div>
   </section>
 </main>
@@ -906,26 +906,25 @@ if ('mediaSession' in navigator){
 }
 
 /* =========================================================
-   17. ПОИСК В ИНТЕРНЕТЕ — Audius (полные треки, без ключа)
+   17. ПОИСК В ИНТЕРНЕТЕ — iTunes Search API
    ========================================================= */
-const AUDIUS_NODE = 'https://discoveryprovider.audius.co/v1';
-const AUDIUS_APP = 'GothicMusicPlayer';
+const ITUNES_API = 'https://itunes.apple.com/search';
 let currentWebResults = [];
 
-async function searchAudius(query){
+async function searchWeb(query){
   const q = query.trim();
   if (!q) return;
   el.webResults.innerHTML = '<div class="web-status">Поиск…</div>';
   el.webSearchBtn.disabled = true;
 
   try {
-    const url = AUDIUS_NODE + '/tracks/search?query=' + encodeURIComponent(q) + '&app_name=' + AUDIUS_APP + '&limit=20';
+    const url = ITUNES_API + '?term=' + encodeURIComponent(q) + '&media=music&limit=20';
     const res = await fetch(url);
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const json = await res.json();
-    const tracks = (json.data || []).filter(t => t.is_streamable !== false);
+    const tracks = json.results || [];
     if (!tracks.length){
-      el.webResults.innerHTML = '<div class="web-status">Ничего не найдено в Audius.</div>';
+      el.webResults.innerHTML = '<div class="web-status">Ничего не найдено.</div>';
       return;
     }
     currentWebResults = tracks;
@@ -933,21 +932,22 @@ async function searchAudius(query){
     tracks.forEach((t, idx) => {
       const row = document.createElement('div');
       row.className = 'web-track';
-      const cover = t.artwork ? (t.artwork['150x150'] || t.artwork['480x480']) : null;
+      const cover = t.artworkUrl100 ? t.artworkUrl100.replace('100x100bb', '150x150bb') : null;
+      const preview = t.previewUrl || null;
       row.innerHTML =
         '<span class="web-thumb">' + (cover ? '<img src="' + esc(cover) + '" alt="" loading="lazy">' : '♪') + '</span>' +
-        '<span class="web-info"><span class="web-title">' + esc(t.title) + '</span>' +
-        '<span class="web-artist">' + esc(t.user ? t.user.name : 'Audius') + '</span></span>' +
-        '<button class="web-add" data-idx="' + idx + '" type="button">+</button>';
+        '<span class="web-info"><span class="web-title">' + esc(t.trackName || 'Без названия') + '</span>' +
+        '<span class="web-artist">' + esc(t.artistName || 'Неизвестен') + '</span></span>' +
+        '<button class="web-add" data-idx="' + idx + '" type="button" ' + (preview ? '' : 'disabled') + '>+</button>';
       row.querySelector('.web-add').addEventListener('click', (e) => {
         e.stopPropagation();
-        addWebTrackToPlaylist(idx);
+        if (preview) addWebTrackToPlaylist(idx);
       });
       el.webResults.appendChild(row);
     });
   } catch(err) {
-    console.error('Audius search failed:', err);
-    el.webResults.innerHTML = '<div class="web-status">Ошибка поиска. Проверьте соединение или откройте сайт через HTTPS (не file://).</div>';
+    console.error('iTunes search failed:', err);
+    el.webResults.innerHTML = '<div class="web-status">Ошибка поиска. Проверьте соединение.</div>';
   } finally {
     el.webSearchBtn.disabled = false;
   }
@@ -955,16 +955,14 @@ async function searchAudius(query){
 
 function addWebTrackToPlaylist(idx){
   const t = currentWebResults[idx];
-  if (!t) return;
-  const streamUrl = AUDIUS_NODE + '/tracks/' + encodeURIComponent(t.id) + '/stream?app_name=' + AUDIUS_APP;
-  const cover = t.artwork ? (t.artwork['480x480'] || t.artwork['150x150']) : null;
+  if (!t || !t.previewUrl) return;
   const track = {
-    url: streamUrl,
-    title: t.title || 'Без названия',
-    artist: t.user ? t.user.name : 'Audius',
-    album: '',
-    cover: cover || null,
-    duration: t.duration || null,
+    url: t.previewUrl,
+    title: t.trackName || 'Без названия',
+    artist: t.artistName || 'Неизвестен',
+    album: t.collectionName || '',
+    cover: t.artworkUrl100 ? t.artworkUrl100.replace('100x100bb', '480x480bb') : null,
+    duration: t.trackTimeMillis ? Math.round(t.trackTimeMillis / 1000) : 30,
   };
   state.tracks.push(track);
   const newIndex = state.tracks.length - 1;
@@ -974,9 +972,9 @@ function addWebTrackToPlaylist(idx){
   if (btn){ btn.textContent = '✓'; btn.disabled = true; }
 }
 
-el.webSearchBtn.addEventListener('click', () => searchAudius(el.webSearchInput.value));
+el.webSearchBtn.addEventListener('click', () => searchWeb(el.webSearchInput.value));
 el.webSearchInput.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter'){ e.preventDefault(); searchAudius(el.webSearchInput.value); }
+  if (e.key === 'Enter'){ e.preventDefault(); searchWeb(el.webSearchInput.value); }
 });
 
 /* =========================================================
