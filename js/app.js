@@ -1,4 +1,5 @@
-import { initPlayerUI } from './player.js';
+// js/app.js
+import { initPlayerUI, setPlaylist, getPlaylist, playTrackByIndex } from './player.js';
 import { initSearch } from './search.js';
 import { initAuth, getUser, addTrackToDB, loadAndRenderPlaylist } from './auth.js';
 
