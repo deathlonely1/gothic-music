@@ -28,7 +28,6 @@ async function doSearch(q){
     el.results.innerHTML = '';
     tracks.forEach(t => {
       const artwork = t.artwork_url ? t.artwork_url.replace('large', 't500x500') : null;
-      // Формируем URL для виджета (но использовать будем ID)
       const trackId = t.id;
 
       const row = document.createElement('div');
@@ -43,16 +42,14 @@ async function doSearch(q){
       `;
       row.querySelector('.web-add').addEventListener('click', (e) => {
         const btn = e.currentTarget;
-        // Отправляем событие для добавления в плейлист (в базу данных)
         window.dispatchEvent(new CustomEvent('add-track', {
           detail: {
             id: trackId,
             title: t.title,
             artist: t.user?.username || 'SoundCloud',
             artwork: artwork,
-            duration: t.duration, // в миллисекундах
-            // stream_url нам больше не нужен для воспроизведения, но можно сохранить для истории
-            stream: `soundcloud:${trackId}` 
+            duration: t.duration,
+            stream: `soundcloud:${trackId}`
           }
         }));
         btn.textContent = '✓';
