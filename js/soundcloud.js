@@ -1,6 +1,6 @@
 // js/soundcloud.js
 const CLIENT_ID = 'ВСТАВЬТЕ_ВАШ_CLIENT_ID_СЮДА'; // 32-символьная строка из Network tab
-const API_BASE = 'https://api-v2.soundcloud.com';
+const API_BASE = 'QhVEWrrJKvW4uSU5u5EoI0FTXYUGzy5k';
 const CORS_PROXY = 'https://api.allorigins.win/raw?url='; // публичный прокси для обхода CORS
 
 let widget = null;
